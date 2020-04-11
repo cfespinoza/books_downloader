@@ -5,15 +5,6 @@ from multiprocessing.pool import Pool
 from lxml import html as htmlRenderer
 import pandas as pd
 
-url_file = "<path_to>/books_downloader/resources/free_springer_books_ebook_list.csv"
-books_directory = "<path_to_folder>/books"
-csv = pd.read_csv(url_file)
-names_urls = zip(csv["Book Title"], csv["OpenURL"])
-
-bases_url = [pair for pair in names_urls]
-
-print("total of possible books: {total}".format(total=len(bases_url)))
-
 
 def extract_pdf_book_url(args):
     name, url = args
@@ -39,17 +30,25 @@ def download_book(args):
     return True
 
 
-with Pool(processes=20) as pool:
-    books_urls = pool.map(func=extract_pdf_book_url, iterable=iter(bases_url))
+if __name__ == "__main__":
 
-found = [(name, url) for name, url in books_urls if url]
-print("total of found books: {total}".format(total=len(found)))
-print(found)
+    url_file = "../resources/free_springer_books_ebook_list.csv"
+    books_directory = "../books"
+    csv = pd.read_csv(url_file)
+    names_urls = zip(csv["Book Title"], csv["OpenURL"])
+    bases_url = [pair for pair in names_urls]
+    print("total of possible books: {total}".format(total=len(bases_url)))
+    with Pool(processes=20) as pool:
+        books_urls = pool.map(func=extract_pdf_book_url, iterable=iter(bases_url))
 
-with Pool(processes=30) as pool:
-    downloaded_books = pool.map(func=download_book, iterable=iter(found))
+    found = [(name, url) for name, url in books_urls if url]
+    print("total of found books: {total}".format(total=len(found)))
+    print(found)
 
-if all(downloaded_books):
-    print("all books have been downloaded")
-else:
-    print("some books have not been downloaded")
+    with Pool(processes=30) as pool:
+        downloaded_books = pool.map(func=download_book, iterable=iter(found))
+
+    if all(downloaded_books):
+        print("all books have been downloaded")
+    else:
+        print("some books have not been downloaded")
