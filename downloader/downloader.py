@@ -5,8 +5,8 @@ from multiprocessing.pool import Pool
 from lxml import html as htmlRenderer
 import pandas as pd
 
-url_file = "/home/cflores/cflores_workspace/books_downloader/resources/free_springer_books_ebook_list.csv"
-books_directory = "/home/cflores/cflores_workspace/books_downloader/books"
+url_file = "<path_to>/books_downloader/resources/free_springer_books_ebook_list.csv"
+books_directory = "<path_to_folder>/books"
 csv = pd.read_csv(url_file)
 names_urls = zip(csv["Book Title"], csv["OpenURL"])
 
